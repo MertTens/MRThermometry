@@ -1,5 +1,7 @@
 **Note:** This code requires the `kspace.mat` file for proper execution. If you need access to this file, please contact me at [alex.mertens@mail.utoronto.ca](mailto:alex.mertens@mail.utoronto.ca), and I can provide it to you.
 
+To run the reconstruction algorithm, run thermo_spars.m.
+
 # Real-Time Acceleration in Low SNR MR Thermometry
 
 **MR thermometry** is a technique used to measure and monitor temperature changes within the body in real-time, primarily during thermal therapies such as focused ultrasound or RF ablation. This technology is crucial for ensuring that targeted tissues reach the desired temperature while avoiding damage to surrounding healthy tissues.
