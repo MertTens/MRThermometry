@@ -2,7 +2,7 @@ clear all; close all;
 
 slice = 2;
 
-% Do a 'normal' reconstructin of the data
+% Get the k-space data and do a fully sampled reconstruction
 load('kdata.mat');
 kdata = permute(kdata,[2,3,1,4,5]);
 kdata = kdata(:,:,:,2,:);
@@ -30,6 +30,8 @@ m3(cc.PixelIdxList{2}) = 1;
 
 mask = m3;
 
+% Generate the spatial subspace
+
 u = data(:,:,1).*m1;
 u = reshape(u,[],1);
 [rows, cols, pts] = size(data);
@@ -37,6 +39,8 @@ d = data.*mask;
 ub = reshape(d,[],237);
 u = [u ub(:,1)];
 
+
+% Create an undersampling mask
 num_basis = size(u,2);
 div = 237;
 [dimx, dimy, ncoils, time_pts] = size(kdata);
@@ -56,6 +60,8 @@ maskg = masku;
 a_factor = dimx*dimy / sum(sum(usmat(:,:,1)));
 fprintf("The acceleration factor is %f\n", a_factor)
 
+
+% Reconstruct each point in time independently with the generated subspace
 svd_recon = zeros(dimx, dimy, div);
 
 vec_usmat = reshape(maskg, [], div);
@@ -77,6 +83,8 @@ for m = 1:div
     svd_recon(:,:,m) = (img);
 end
 
+
+% Calculate the temperature using MR Physics
 proposed = svd_recon;
 TR = 85.653; TE = 23.75;
 alpha = -0.008;
@@ -132,6 +140,8 @@ for i = 1:nTime
     imagesc(pdiff_prop2D.*mask1, [-q q])
     pause(0.01)
 end
+
+% Display the temperature
 figure(); plot(t,vals1-vals1(1),'linewidth',2); hold on; plot(t,vals2-vals2(1),'linewidth',2);
 xlabel('Time (s)'); ylabel('Temperature ({\circ}C)'); legend('Original','Proposed');
 title('Mean temperature over ROI');
@@ -148,6 +158,7 @@ set(gcf,'Position',[488,342,927,420]);
 sgtitle('Temperature at last time point');
 
 
+% Run some Kalman filters
 obsv1 = vals1 - vals1(1);
 kf1 = zeros(size(obsv1));
 param.a = 1;
